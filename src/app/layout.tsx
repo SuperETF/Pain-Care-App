@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import './globals.css'  // 이 부분이 중요합니다
+import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

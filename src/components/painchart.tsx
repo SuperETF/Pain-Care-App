@@ -23,14 +23,24 @@ ChartJS.register(
   Legend
 );
 
-const PainChart: React.FC = () => {
-  const storedData = localStorage.getItem("painHistory");
-  const painHistory = JSON.parse(storedData || "[]");
+interface PainRecord {
+  timestamp: number;
+  painScore: number;
+}
 
-  const dates = painHistory.map((record: any) =>
+const PainChart: React.FC = () => {
+  const storedData =
+    typeof window !== "undefined" ? localStorage.getItem("painHistory") : "[]";
+  const painHistory: PainRecord[] = JSON.parse(storedData || "[]");
+
+  if (!painHistory.length) {
+    return <p className="text-center text-gray-500">통증 기록이 없습니다.</p>;
+  }
+
+  const dates = painHistory.map((record: PainRecord) =>
     new Date(record.timestamp).toLocaleDateString()
   );
-  const scores = painHistory.map((record: any) => record.painScore);
+  const scores = painHistory.map((record: PainRecord) => record.painScore);
 
   const data = {
     labels: dates,
