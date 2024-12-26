@@ -5,7 +5,6 @@ import PainChart from "@/components/painchart";
 import PainInput from "@/components/PainInput";
 import PainTypeSelection from "@/components/PainTypeSelection";
 import VideoDisplay from "@/components/VideoDisplay";
-import AskForSymptoms from "@/components/AskForSymtoms";
 import BodyParts from "@/components/bodyparts";
 
 interface PainRecord {
@@ -38,7 +37,6 @@ const PainTrackerApp: React.FC = () => {
   const [showPainInput, setShowPainInput] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const [recommendation, setRecommendation] = useState<PainRecord | null>(null);
-  const [askForSymptoms, setAskForSymptoms] = useState(false);
 
   const bodyParts: { [key: string]: string } = {
     back: '허리',
@@ -71,7 +69,6 @@ const PainTrackerApp: React.FC = () => {
     setShowChart(false);
     setShowVideo(false);
     setShowPainInput(false);
-    setAskForSymptoms(false);
   };
 
   const handleBodyPartClick = (part: string): void => {
@@ -85,9 +82,8 @@ const PainTrackerApp: React.FC = () => {
   };
 
   const handleVideoComplete = (): void => {
-    setAskForSymptoms(true);
-    setShowVideo(false);
     setShowPainInput(true);
+    setShowVideo(false);
   };
 
   const handlePainScoreSubmit = (score: number): void => {
@@ -103,23 +99,7 @@ const PainTrackerApp: React.FC = () => {
     const updatedHistory = [...painHistory, newRecord];
     setPainHistory(updatedHistory);
     localStorage.setItem('painHistory', JSON.stringify(updatedHistory));
-
-    setAskForSymptoms(false);
-    setShowPainInput(false);
-    setShowChart(true);
-
-    if (currentVideoIndex < painVideos.length - 1) {
-      const continueExercise = confirm("증상이 아직 남아있습니까? 마저 해봅시다!");
-      if (continueExercise) {
-        setCurrentVideoIndex(currentVideoIndex + 1);
-        setShowVideo(true);
-      } else {
-        resetAppState();
-      }
-    } else {
-      alert("증상이 없다면 현재 기록을 저장해서 두고두고 진행해 보세요!");
-      resetAppState();
-    }
+    resetAppState();
   };
 
   return (
@@ -136,9 +116,9 @@ const PainTrackerApp: React.FC = () => {
 
             {recommendation && (
               <div className="mb-6 p-4 bg-gradient-to-r from-green-100 to-teal-100 text-gray-800 rounded-lg shadow-lg">
-                <h2 className="text-xl font-bold mb-2">✨ 나에게 효과가 있던 운동 ✨</h2>
-                <p className="text-lg">
-                  <strong>{recommendation.bodyPart}</strong>의 "<em>{recommendation.painType}</em>" 통증 완화를 위한 운동을 추천합니다.
+                <h2 className="text-xl font-bold mb-2">✨ 효과가 있던 운동 ✨</h2>
+                <p>
+                  <strong>{recommendation.bodyPart}</strong>의 &quot;<em>{recommendation.painType}</em>&quot; 통증 완화를 위한 운동입니다.
                 </p>
               </div>
             )}
@@ -175,15 +155,6 @@ const PainTrackerApp: React.FC = () => {
         )}
 
         {showChart && <PainChart />}
-
-        {selectedBodyPart && (
-          <button
-            onClick={resetAppState}
-            className="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition duration-300"
-          >
-            처음으로 돌아가기
-          </button>
-        )}
       </div>
     </div>
   );
